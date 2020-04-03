@@ -73,22 +73,26 @@ class Deck:
 
 class Hand:
     def __int__(self):
-        self.cards = []  # This list holds cards on the hand of a player.
-        self.value = 0   # To keep track of the sum of all cards.
+        self.hold_cards = []  # This list holds cards on the hand of a player.
+        self.sum_of_cards = 0   # To keep track of the sum of all cards.
         self.aces = 0    # To keep track of aces so that its value can adjusted whenever necessary.
 
-    def add_card(self, card):
+    def add_card(self, new_card_to_add):
         """
         Adds new card to the hand of a player.
-        :param card: list that holds a deck of cards
+        :param new_card_to_add: list that holds a deck of cards
         :return:
         """
-        new_card_from_deck = card.pop()
-        self.cards.append(new_card_from_deck)
+        new_card_from_deck = new_card_to_add.pop(0)
+        self.hold_cards.append(new_card_from_deck)
 
     def adjust_for_ace(self):
         pass
 
+    # This is a temporary function only for testing purpose.
+    def show_cards_on_hand(self):
+        for hand_cards in self.cards:
+            hand_cards.print_card()
 
 class Chips:
     def __int__(self):
@@ -123,6 +127,9 @@ while True:
     top_two = new_deck.return_top_two()
     for cd in top_two:
         cd.print_card()
+    human_player.add_card(card_dealt_to_human_player)
+    human_player.add_card(card_dealt_to_human_player)
+
     '''
     computer_player = Hand()  # Computer player created; Hand object.
     print("Before Dealing")
