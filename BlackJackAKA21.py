@@ -72,7 +72,7 @@ class Deck:
 
 
 class Hand:
-    def __int__(self):
+    def __init__(self):
         self.hold_cards = []  # This list holds cards on the hand of a player.
         self.sum_of_cards = 0   # To keep track of the sum of all cards.
         self.aces = 0    # To keep track of aces so that its value can adjusted whenever necessary.
@@ -91,8 +91,9 @@ class Hand:
 
     # This is a temporary function only for testing purpose.
     def show_cards_on_hand(self):
-        for hand_cards in self.cards:
+        for hand_cards in self.hold_cards:
             hand_cards.print_card()
+
 
 class Chips:
     def __int__(self):
@@ -115,6 +116,8 @@ while True:
     new_deck = Deck()  # Creating a new deck of cards.
     new_deck.shuffle()  # Deck shuffled.
     human_player = Hand()  # Human player created; Hand object.
+
+    # This section is for dealing card to human player
     print("Before Dealing")
     top_two = new_deck.return_top_two()
     for cd in top_two:
@@ -129,8 +132,10 @@ while True:
         cd.print_card()
     human_player.add_card(card_dealt_to_human_player)
     human_player.add_card(card_dealt_to_human_player)
+    print("Card Held by Human player")
+    human_player.show_cards_on_hand()
 
-    '''
+    # This section is for dealing card to computer player
     computer_player = Hand()  # Computer player created; Hand object.
     print("Before Dealing")
     top_two = new_deck.return_top_two()
@@ -138,9 +143,14 @@ while True:
         cd.print_card()
     card_dealt_to_computer = new_deck.deal()
     print("Dealt to computer.")
+    for cards in card_dealt_to_computer:
+        cards.print_card()
     print("After dealing.")
     top_two = new_deck.return_top_two()
     for cd in top_two:
         cd.print_card()
-    '''
+    computer_player.add_card(card_dealt_to_computer)
+    computer_player.add_card(card_dealt_to_computer)
+    print("Card Held by Computer")
+    computer_player.show_cards_on_hand()
     break
