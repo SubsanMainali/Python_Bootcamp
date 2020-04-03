@@ -66,10 +66,6 @@ class Deck:
         """
         return [self.deck.pop(0), self.deck.pop(0)]
 
-    def return_top_two(self):
-        top_two_cards = [self.deck[0], self.deck[1]]
-        return top_two_cards
-
 
 class Hand:
     def __init__(self):
@@ -89,14 +85,9 @@ class Hand:
     def adjust_for_ace(self):
         pass
 
-    # This is a temporary function only for testing purpose.
-    def show_cards_on_hand(self):
-        for hand_cards in self.hold_cards:
-            hand_cards.print_card()
-
 
 class Chips:
-    def __int__(self):
+    def __init__(self):
         self.total = 100  # you get 100 coins at the start
         self.bet = 0
 
@@ -118,39 +109,13 @@ while True:
     human_player = Hand()  # Human player created; Hand object.
 
     # This section is for dealing card to human player
-    print("Before Dealing")
-    top_two = new_deck.return_top_two()
-    for cd in top_two:
-        cd.print_card()
     card_dealt_to_human_player = new_deck.deal()
-    print("Dealt to human player.")
-    for cards in card_dealt_to_human_player:
-        cards.print_card()
-    print("After dealing.")
-    top_two = new_deck.return_top_two()
-    for cd in top_two:
-        cd.print_card()
     human_player.add_card(card_dealt_to_human_player)
     human_player.add_card(card_dealt_to_human_player)
-    print("Card Held by Human player")
-    human_player.show_cards_on_hand()
 
     # This section is for dealing card to computer player
     computer_player = Hand()  # Computer player created; Hand object.
-    print("Before Dealing")
-    top_two = new_deck.return_top_two()
-    for cd in top_two:
-        cd.print_card()
     card_dealt_to_computer = new_deck.deal()
-    print("Dealt to computer.")
-    for cards in card_dealt_to_computer:
-        cards.print_card()
-    print("After dealing.")
-    top_two = new_deck.return_top_two()
-    for cd in top_two:
-        cd.print_card()
     computer_player.add_card(card_dealt_to_computer)
     computer_player.add_card(card_dealt_to_computer)
-    print("Card Held by Computer")
-    computer_player.show_cards_on_hand()
     break
