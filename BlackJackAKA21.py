@@ -32,6 +32,7 @@ class Card:
         print('|             |')
         print('---------------')
 
+    # This a temporary function, removing it won't break your program.
     def return_card_rank(self):
         return self.rank
 
@@ -90,9 +91,12 @@ class Hand:
         self.hold_cards.append(new_card_from_deck)
 
     def adjust_for_ace(self):
+        """
+        counts the number of aces held
+        """
         self.aces = 0
         for h_card in self.hold_cards:
-            if h_card.return_card_rank() == 'Ace':
+            if h_card.rank == 'Ace':
                 self.aces += 1
 
     # This is a temporary function only for testing purpose.
@@ -107,7 +111,7 @@ class Hand:
 
 class Chips:
     def __init__(self):
-        self.total = 100  # you get 100 coins at the start
+        self.total = 0  # you get 100 coins at the start
         self.bet = 0
 
     def win_bet(self):
@@ -167,10 +171,53 @@ while True:
     # Show no. of Aces in Hand
     # This is for testing purpose
     print("Before Adjusting")
-    aces_held = human_player.return_no_of_aces()
-    print(f"No of Aces= {aces_held}")
+    # aces_held = human_player.return_no_of_aces()
+    print(f"No of Aces= {human_player.aces}")
     print("After Adjusting")
     human_player.adjust_for_ace()
-    aces_held = human_player.return_no_of_aces()
-    print(f"No of Aces= {aces_held}")
+    # aces_held = human_player.return_no_of_aces()
+    print(f"No of Aces= {human_player.aces}")
+
+    new_chip = Chips()
+    print(f'Total={new_chip.total}')
+    # Player must buy chips before sitting for any game.
+    while True:
+        if new_chip.total == 0:
+            try:
+                player_total_chips = int(input("Enter total chips you have : "))
+                if player_total_chips <= 0:
+                    raise Exception
+            except ValueError:
+                print("Invalid! Enter a positive number.")
+                continue
+            except Exception:
+                print("Invalid Amount Entered!")
+                continue
+            # else block runs only when try block doesn't throw an exception.
+            else:
+                new_chip.total += player_total_chips
+                print("Thank you!")
+                break
+        # This is just to make sure that the program doesn't get stuck here due to some unexpected reason.
+        else:
+            break
+    # Ask player to set bet for each round; bet is successful only if the amount is available in his bank
+    while True:
+        if new_chip.total > 0:
+            try:
+                player_bet = int(input("Enter your bet for this round : "))
+                if player_bet > new_chip.total:
+                    raise Exception
+            except ValueError:
+                print("Invalid! Enter a positive number")
+            except Exception:
+                print("Sorry! You don't have enough money.")
+                print(f'You have {new_chip.total}')
+            else:
+                new_chip.bet += player_bet
+                print("Thank you!")
+                break
+        # To avoid program from getting stuck here due to some unexpected reasons.
+        else:
+            break
     break
