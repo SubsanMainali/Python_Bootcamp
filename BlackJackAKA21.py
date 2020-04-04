@@ -93,12 +93,15 @@ class Hand:
 
     def adjust_for_ace(self):
         """
-        counts the number of aces held
+        counts the number of aces held and finds sum of all cards except Ace
         """
         self.aces = 0
+        self.sum_of_cards = 0
         for h_card in self.hold_cards:
             if h_card.rank == 'Ace':
                 self.aces += 1
+            else:
+                self.sum_of_cards += h_card.value
 
     # This is a temporary function only for testing purpose.
     def show_cards_on_hand(self):
@@ -208,6 +211,31 @@ def show_all(player, dealer):
         all_cards.print_card()
 
 
+def player_busts():
+    if (human_player.sum_of_cards + human_player.aces*1) > 21:
+        return True
+    elif (human_player.sum_of_cards + human_player.aces*10) > 21:
+        return True
+    else:
+        return False
+
+
+def player_wins():
+    pass
+
+
+def dealer_busts():
+    pass
+
+
+def dealer_wins():
+    pass
+
+
+def push():
+    pass
+
+
 # Game play begins here.....
 while True:
     # Game Opening
@@ -306,6 +334,14 @@ while True:
     playing = True
     while playing:
         playing = hit_or_stand(card_deck=new_deck, hand=human_player)
+        # Next step depends on whether player busts or not.
+        # Checking whether player busts or not
+        if playing is True:
+            human_player.adjust_for_ace()  # Adjusting the number of Aces and sum the cards except Aces.
+            if player_busts() is True:  # To check if player busted.
+                playing = False
+            else:
+                playing = True
 
     # To check if hit is working or not; you can remove it
     human_player.show_cards_on_hand()
