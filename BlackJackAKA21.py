@@ -32,6 +32,9 @@ class Card:
         print('|             |')
         print('---------------')
 
+    def return_card_rank(self):
+        return self.rank
+
 
 class Deck:
     def __init__(self):
@@ -87,16 +90,23 @@ class Hand:
         self.hold_cards.append(new_card_from_deck)
 
     def adjust_for_ace(self):
-        pass
+        self.aces = 0
+        for h_card in self.hold_cards:
+            if h_card.return_card_rank() == 'Ace':
+                self.aces += 1
 
     # This is a temporary function only for testing purpose.
     def show_cards_on_hand(self):
         for hand_cards in self.hold_cards:
             hand_cards.print_card()
 
+    # This is a temporary function
+    def return_no_of_aces(self):
+        return self.aces
+
 
 class Chips:
-    def __int__(self):
+    def __init__(self):
         self.total = 100  # you get 100 coins at the start
         self.bet = 0
 
@@ -114,7 +124,7 @@ while True:
     print("| Welcome To BlackJack |")
     print("========================")
     new_deck = Deck()  # Creating a new deck of cards.
-    new_deck.shuffle()  # Deck shuffled.
+    # new_deck.shuffle()  # Deck shuffled.
     human_player = Hand()  # Human player created; Hand object.
 
     # This section is for dealing card to human player
@@ -153,4 +163,14 @@ while True:
     computer_player.add_card(card_dealt_to_computer)
     print("Card Held by Computer")
     computer_player.show_cards_on_hand()
+
+    # Show no. of Aces in Hand
+    # This is for testing purpose
+    print("Before Adjusting")
+    aces_held = human_player.return_no_of_aces()
+    print(f"No of Aces= {aces_held}")
+    print("After Adjusting")
+    human_player.adjust_for_ace()
+    aces_held = human_player.return_no_of_aces()
+    print(f"No of Aces= {aces_held}")
     break
