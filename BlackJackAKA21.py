@@ -1,3 +1,4 @@
+from IPython.display import clear_output
 import random  # for shuffling cards
 families = ['Spade', 'Club', 'Heart', 'Diamond']
 ranks = ['Ace', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Jack', 'Queen', 'King']
@@ -49,15 +50,6 @@ class Deck:
         :return: nothing
         """
         random.shuffle(self.deck)
-        print("Deck Shuffled!")
-
-    def print_deck(self):
-        """
-        Prints a deck of card
-        :return: nothing
-        """
-        for card in self.deck:
-            card.print_card()
 
     def deal(self):
         """
@@ -72,6 +64,7 @@ class Hand:
         self.hold_cards = []  # This list holds cards on the hand of a player.
         self.sum_of_cards = 0   # To keep track of the sum of all cards.
         self.aces = 0    # To keep track of aces so that its value can adjusted whenever necessary.
+        self.sum = 0  # Sum including Ace
 
     def add_card(self, new_card_to_add):
         """
@@ -83,41 +76,279 @@ class Hand:
         self.hold_cards.append(new_card_from_deck)
 
     def adjust_for_ace(self):
-        pass
+        """
+        counts the number of aces held and finds sum of all cards except Ace
+        """
+        self.aces = 0
+        self.sum_of_cards = 0
+        for h_card in self.hold_cards:
+            if h_card.rank == 'Ace':
+                self.aces += 1
+            else:
+                self.sum_of_cards += h_card.value
 
 
 class Chips:
     def __init__(self):
-        self.total = 100  # you get 100 coins at the start
+        self.total = 0  # you get 100 coins at the start
         self.bet = 0
 
     def win_bet(self):
-        pass
+        self.total += 2*self.bet
 
     def lose_bet(self):
-        pass
+        self.total = self.total - self.bet
+
+
+def take_bet():
+    # Player must buy chips before sitting for any game.
+    while True:
+        if new_chip.total == 0:
+            try:
+                player_total_chips = int(input("Enter total chips you have : "))
+                if player_total_chips <= 0:
+                    raise Exception
+            except ValueError:
+                print("Invalid! Enter a positive number.")
+                continue
+            except Exception:
+                print("Invalid Amount Entered!")
+                continue
+            # else block runs only when try block doesn't throw an exception.
+            else:
+                new_chip.total = player_total_chips
+                print("Thank you!")
+                break
+        # This is just to make sure that the program doesn't get stuck here due to some unexpected reason.
+        else:
+            break
+    # Ask player to set bet for each round; bet is successful only if the amount is available in his bank
+    while True:
+        if new_chip.total > 0:
+            try:
+                player_bet = int(input("Enter your bet for this round : "))
+                if player_bet > new_chip.total:
+                    raise Exception
+            except ValueError:
+                print("Invalid! Enter a positive number")
+            except Exception:
+                print("Sorry! You don't have enough money.")
+                print(f'You have {new_chip.total}')
+            else:
+                new_chip.bet = player_bet
+                print("Thank you!")
+                break
+        # To avoid program from getting stuck here due to some unexpected reasons.
+        else:
+            break
+
+
+def hit(card_deck, hand):
+    """
+    If player hits, topmost card of the deck goes to player's hand.
+    """
+    hand.hold_cards.append(card_deck.deck.pop(0))
+
+
+def hit_or_stand(card_deck, hand):
+    """
+    deck : deck of playing cards; Class Deck() type object.
+    hand : hand of a player; Hand() object
+
+    """
+    ask = str(input("Would you like to hit? (Y/N)"))
+    if ask.upper() == 'Y':
+        hit(card_deck=card_deck, hand=hand)
+    else:
+        return False
+    return True
+
+
+def show_some(player, dealer):
+    """
+    Shows all the cards of a player but only one card of the dealer.
+    """
+    print("Dealer's Card")
+    print("=============")
+    dealer.hold_cards[0].print_card()
+    print("__________________________")
+    print("Player's Card")
+    for all_cards in player.hold_cards:
+        all_cards.print_card()
+
+
+def show_all(player, dealer):
+    """
+    Shows all the cards in both player's hand.
+    """
+    print("Dealer's Card")
+    print("=============")
+    for all_cards in dealer.hold_cards:
+        all_cards.print_card()
+    print("____________________________________________________________")
+    print("Player's Card")
+    print("==============")
+    for all_cards in player.hold_cards:
+        all_cards.print_card()
+
+
+def player_busts():
+    """
+    True if player busts, otherwise False.
+    """
+    human_player.adjust_for_ace()  # Adjusting the number of Aces and sum the cards except Aces.
+    if (human_player.sum_of_cards + human_player.aces*11) > 21:
+        if (human_player.sum_of_cards + human_player.aces*1) > 21:
+            return True
+        else:
+            human_player.sum = human_player.sum_of_cards + human_player.aces*1
+            return False
+    else:
+        human_player.sum = human_player.sum_of_cards + human_player.aces*11
+        return False
+
+
+def player_wins():
+    """
+    Takes necessary actions if player wins.
+    """
+    print("+++++++++++++++++++++++++++++")
+    print("| Congratulations! You won. |")
+    print("+++++++++++++++++++++++++++++")
+    new_chip.win_bet()  # Won amount added to player's total amount.
+    print(f'Your total sum = {new_chip.total}$')
+
+
+def dealer_busts():
+    """
+    True if computer busts, returns False.
+    """
+    computer_player.adjust_for_ace()
+    if (computer_player.sum_of_cards + computer_player.aces*11) > 21:
+        if(computer_player.sum_of_cards + computer_player.aces*1) > 21:
+            return True
+        else:
+            computer_player.sum = computer_player.sum_of_cards + computer_player.aces *1
+            return False
+    else:
+        computer_player.sum = computer_player.sum_of_cards + computer_player.aces*11
+        return False
+
+
+def dealer_keeps_hitting():
+    """
+    Return True if deal can keep hitting, otherwise False
+    """
+    computer_player.adjust_for_ace()
+    if (computer_player.sum_of_cards + computer_player.aces*11) > 17:
+        if(computer_player.sum_of_cards + computer_player.aces*1) <= 17:
+            return True
+        else:
+            return False
+    else:
+        return True
+
+
+def dealer_wins():
+    """
+    Takes necessary action if dealer wins.
+    """
+    print("===========================")
+    print("| Better luck next time ! |")
+    print("===========================")
+    new_chip.lose_bet()  # Bet deducted from player's total sum.
+    print(f'Your total sum = {new_chip.total}$')
 
 
 # Game play begins here.....
-while True:
+play_begins = True
+while play_begins:
+    clear_output(wait=False)
     # Game Opening
     print("========================")
     print("| Welcome To BlackJack |")
     print("========================")
-    new_deck = Deck()  # Creating a new deck of cards.
-    new_deck.shuffle()  # Deck shuffled.
+    # After you enter inside a casino, first of all you buy chips.
+    new_chip = Chips()
 
-    human_player = Hand()  # Human player created; Hand object.
+    # If game is continued, second game starts from here.
+    play_again = True
+    while play_again:
+        new_deck = Deck()  # Creating a new deck of cards.
+        new_deck.shuffle()  # Deck shuffled.
 
-    # This section is for dealing card to human player
-    card_dealt_to_human_player = new_deck.deal()
-    human_player.add_card(card_dealt_to_human_player)
-    human_player.add_card(card_dealt_to_human_player)
+        # Ask for bet
+        print(f'Total={new_chip.total}')
+        take_bet()  # Take bet from player
 
-    # This section is for dealing card to computer player
-    computer_player = Hand()  # Computer player created; Hand object.
-    card_dealt_to_computer = new_deck.deal()
-    computer_player.add_card(card_dealt_to_computer)
-    computer_player.add_card(card_dealt_to_computer)
+        human_player = Hand()  # Human player created; Hand object.
+        # This section is for dealing card to human player
+        card_dealt_to_human_player = new_deck.deal()
+        human_player.add_card(card_dealt_to_human_player)
+        human_player.add_card(card_dealt_to_human_player)
 
-    break
+        computer_player = Hand()  # Computer player created; Hand object.
+        # This section is for dealing card to computer player
+        card_dealt_to_computer = new_deck.deal()
+        computer_player.add_card(card_dealt_to_computer)
+        computer_player.add_card(card_dealt_to_computer)
+
+        human_player.adjust_for_ace()
+        computer_player.adjust_for_ace()
+
+        # To Show Dealer's one card and player's both cards.
+        show_some(player=human_player, dealer=computer_player)
+
+        # Ask player if he wishes to hit or stand.
+        human_playing = True
+        dealer_turn = True
+        while human_playing:
+            human_playing = hit_or_stand(card_deck=new_deck, hand=human_player)
+            if human_playing is True:
+                # Before going for next hit; let the player check his card once more.
+                show_some(player=human_player, dealer=computer_player)
+                if player_busts() is True:
+                    human_playing = False
+                    show_all(player=human_player, dealer=computer_player)
+                    dealer_wins()
+                    dealer_turn = False
+            else:
+                # If player doesn't want more cards; sum all the cards.
+                player_busts()
+
+        # Once Human player stands; dealer's turn begins. This means human player hasn't busted yet.
+        if dealer_turn is True:
+            computer_playing = True
+            while computer_playing:
+                if dealer_keeps_hitting() is True:
+                    hit(card_deck=new_deck, hand=computer_player)
+                else:
+                    computer_playing = False
+
+            # checking wining condition
+            if dealer_busts() is True:
+                show_all(player=human_player, dealer=computer_player)
+                player_wins()
+            else:
+                dealer_busts()  # To get the sum of dealer's card.
+                # Compare the sum of cards; the player with sum nearest to 21 wins.
+                if (21-human_player.sum) < (21-computer_player.sum):
+                    show_all(player=human_player, dealer=computer_player)
+                    player_wins()
+                else:
+                    show_all(player=human_player, dealer=computer_player)
+                    dealer_wins()
+
+        # Ask if they wanted to play again?
+        ask_to_play = str(input("Would you like to play again? (Y/N)"))
+        if ask_to_play.upper() != 'Y':
+            print()
+            play_again = False
+
+    # Ask if they really wanted to quit game?
+    ask_to_quit = str(input("Are you sure to quit game? (Y/N)"))
+    if ask_to_quit.upper() == 'Y':
+        print("-----------------------")
+        print("Thank You for playing.")
+        play_begins = False
+    # End of game
