@@ -82,6 +82,7 @@ class Hand:
         self.hold_cards = []  # This list holds cards on the hand of a player.
         self.sum_of_cards = 0   # To keep track of the sum of all cards.
         self.aces = 0    # To keep track of aces so that its value can adjusted whenever necessary.
+        self.sum = 0  # Sum including Ace
 
     def add_card(self, new_card_to_add):
         """
@@ -120,10 +121,10 @@ class Chips:
         self.bet = 0
 
     def win_bet(self):
-        pass
+        self.total += 2*self.bet
 
     def lose_bet(self):
-        pass
+        self.total = self.total - self.bet
 
 
 def take_bet():
@@ -218,13 +219,19 @@ def player_busts():
         if (human_player.sum_of_cards + human_player.aces*1) > 21:
             return True
         else:
+            human_player.sum = human_player.sum_of_cards + human_player.aces*1
             return False
     else:
+        human_player.sum = human_player.sum_of_cards + human_player.aces*11
         return False
 
 
 def player_wins():
-    pass
+    print("+++++++++++++++++++++++++++++")
+    print("| Congratulations! You won. |")
+    print("+++++++++++++++++++++++++++++")
+    new_chip.win_bet()  # Won amount added to player's total amount.
+    print(f'Your total sum = {new_chip.total}$')
 
 
 def dealer_busts():
@@ -233,8 +240,10 @@ def dealer_busts():
         if(computer_player.sum_of_cards + computer_player.aces*1) > 21:
             return True
         else:
+            computer_player.sum = computer_player.sum_of_cards + computer_player.aces *1
             return False
     else:
+        computer_player.sum = computer_player.sum_of_cards + computer_player.aces*11
         return False
 
 
@@ -250,135 +259,182 @@ def dealer_keeps_hitting():
 
 
 def dealer_wins():
-    pass
-
-
-def push():
-    pass
+    print("===========================")
+    print("| Better luck next time ! |")
+    print("===========================")
+    new_chip.lose_bet()  # Bet deducted from player's total sum.
+    print(f'Your total sum = {new_chip.total}$')
 
 
 # Game play begins here.....
-while True:
+play_begins = True
+while play_begins:
     # Game Opening
     print("========================")
     print("| Welcome To BlackJack |")
     print("========================")
-    new_deck = Deck()  # Creating a new deck of cards.
-    # new_deck.shuffle()  # Deck shuffled.
-
-    # Ask for bet
+    # After you enter inside a casino, first of all you buy chips.
     new_chip = Chips()
-    print(f'Total={new_chip.total}')
-    take_bet()  # Take bet from player
 
-    human_player = Hand()  # Human player created; Hand object.
-    # This section is for dealing card to human player
-    # You can remove this section
-    print("Before Dealing")
-    top_two = new_deck.return_top_two()
-    for cd in top_two:
-        cd.print_card()
+    # If game is continued, second game starts from here.
+    play_again = True
+    while play_again:
+        new_deck = Deck()  # Creating a new deck of cards.
+        new_deck.shuffle()  # Deck shuffled.
 
-    # Keep this line
-    card_dealt_to_human_player = new_deck.deal()
+        # Ask for bet
+        print(f'Total={new_chip.total}')
+        take_bet()  # Take bet from player
 
-    # remove this section
-    print("Dealt to human player.")
-    for cards in card_dealt_to_human_player:
-        cards.print_card()
-    print("After dealing.")
-    top_two = new_deck.return_top_two()
-    for cd in top_two:
-        cd.print_card()
+        human_player = Hand()  # Human player created; Hand object.
+        # This section is for dealing card to human player
+        # You can remove this section
+        print("Before Dealing")
+        top_two = new_deck.return_top_two()
+        for cd in top_two:
+            cd.print_card()
 
-    # Keep these lines
-    human_player.add_card(card_dealt_to_human_player)
-    human_player.add_card(card_dealt_to_human_player)
+        # Keep this line
+        card_dealt_to_human_player = new_deck.deal()
 
-    # Remove these lines
-    print("Card Held by Human player")
-    human_player.show_cards_on_hand()
+        # remove this section
+        print("Dealt to human player.")
+        for cards in card_dealt_to_human_player:
+            cards.print_card()
+        print("After dealing.")
+        top_two = new_deck.return_top_two()
+        for cd in top_two:
+            cd.print_card()
 
-    # This section is for dealing card to computer player
-    computer_player = Hand()  # Computer player created; Hand object.
+        # Keep these lines
+        human_player.add_card(card_dealt_to_human_player)
+        human_player.add_card(card_dealt_to_human_player)
 
-    # You can remove this part
-    print("Before Dealing")
-    top_two = new_deck.return_top_two()
-    for cd in top_two:
-        cd.print_card()
+        # Remove these lines
+        print("Card Held by Human player")
+        human_player.show_cards_on_hand()
 
-    # Keep this line
-    card_dealt_to_computer = new_deck.deal()
+        # This section is for dealing card to computer player
+        computer_player = Hand()  # Computer player created; Hand object.
 
-    # You can remove this section
-    print("Dealt to computer.")
-    for cards in card_dealt_to_computer:
-        cards.print_card()
-    print("After dealing.")
-    top_two = new_deck.return_top_two()
-    for cd in top_two:
-        cd.print_card()
+        # You can remove this part
+        print("Before Dealing")
+        top_two = new_deck.return_top_two()
+        for cd in top_two:
+            cd.print_card()
 
-    # You must keep these lines
-    computer_player.add_card(card_dealt_to_computer)
-    computer_player.add_card(card_dealt_to_computer)
+        # Keep this line
+        card_dealt_to_computer = new_deck.deal()
 
-    # You can remove this part
-    print("Card Held by Computer")
-    computer_player.show_cards_on_hand()
-    # Show no. of Aces in Hand
-    # This is for testing purpose
-    print("Before Adjusting")
-    # aces_held = human_player.return_no_of_aces()
-    print(f"No of Aces= {human_player.aces}")
-    print("After Adjusting")
+        # You can remove this section
+        print("Dealt to computer.")
+        for cards in card_dealt_to_computer:
+            cards.print_card()
+        print("After dealing.")
+        top_two = new_deck.return_top_two()
+        for cd in top_two:
+            cd.print_card()
 
-    # You must keep these lines
-    human_player.adjust_for_ace()
-    computer_player.adjust_for_ace()
+        # You must keep these lines
+        computer_player.add_card(card_dealt_to_computer)
+        computer_player.add_card(card_dealt_to_computer)
 
-    # You can remove these lines
-    aces_held = human_player.return_no_of_aces()
-    print(f"No of Aces= {human_player.aces}")
+        # You can remove this part
+        print("Card Held by Computer")
+        computer_player.show_cards_on_hand()
+        # Show no. of Aces in Hand
+        # This is for testing purpose
+        print("Before Adjusting")
+        # aces_held = human_player.return_no_of_aces()
+        print(f"No of Aces= {human_player.aces}")
+        print("After Adjusting")
 
-    # Keep this line
-    # To Show Dealer's one card and player's both cards.
-    show_some(player=human_player, dealer=computer_player)
+        # You must keep these lines
+        human_player.adjust_for_ace()
+        computer_player.adjust_for_ace()
 
-    # This for testing at the moment.
-    # To show all cards
-    show_all(player=human_player, dealer=computer_player)
+        # You can remove these lines
+        aces_held = human_player.return_no_of_aces()
+        print(f"No of Aces= {human_player.aces}")
 
-    # Ask player if he wishes to hit or stand.
-    # You must keep this section.
-    human_playing = True
-    while human_playing:
-        human_playing = hit_or_stand(card_deck=new_deck, hand=human_player)
-        if human_playing is True:
-            # Before going for next hit let the player check his card once more.
-            show_some(player=human_player, dealer=computer_player)
-            if player_busts() is True:  # To check if player busted.
-                human_playing = False
-                # Might have to come back here...
+        # Keep this line
+        # To Show Dealer's one card and player's both cards.
+        show_some(player=human_player, dealer=computer_player)
 
-    # To check if hit is working or not; you can remove it
-    human_player.show_cards_on_hand()
+        # This for testing at the moment.
+        # To show all cards
+        show_all(player=human_player, dealer=computer_player)
 
-    # To check if hitting works for dealer or not.
-    print("Before Dealer's Turn")
-    computer_player.show_cards_on_hand()
+        # Ask player if he wishes to hit or stand.
+        # You must keep this section.
+        human_playing = True
+        dealer_turn = True
+        while human_playing:
+            human_playing = hit_or_stand(card_deck=new_deck, hand=human_player)
+            if human_playing is True:
+                # Before going for next hit let the player check his card once more.
+                show_some(player=human_player, dealer=computer_player)
+                if player_busts() is True:  # To check if player busted.
+                    human_playing = False
+                    show_all(player=human_player, dealer=computer_player)
+                    # Dealer won.
+                    dealer_wins()
+                    dealer_turn = False
+            else:
+                # If player doesn't want more cards; sum all the cards.
+                player_busts()
 
-    # Once Human player stands; dealer's turn begins.
-    computer_playing = True
-    while computer_playing:
-        if dealer_keeps_hitting() is True:
-            hit(card_deck=new_deck, hand=computer_player)
-        else:
-            computer_playing = False
+        # To check if hit is working or not; you can remove it
+        print("Card on player's hand after hit")
+        human_player.show_cards_on_hand()
+        print(f'human_player.sum = {human_player.sum}')
 
-    # This is just for testing; you can remove this section.
-    print("After Dealer is done hitting")
-    computer_player.show_cards_on_hand()
+        # To check if hitting works for dealer or not.
+        print("Before Dealer's Turn")
+        computer_player.show_cards_on_hand()
 
-    break
+        # Once Human player stands; dealer's turn begins. This means human player hasn't busted yet.
+        # You must keep this code
+        if dealer_turn is True:
+            computer_playing = True
+            while computer_playing:
+                if dealer_keeps_hitting() is True:
+                    hit(card_deck=new_deck, hand=computer_player)
+                else:
+                    computer_playing = False
+
+            # checking wining condition
+            # You must keep this code.
+            if dealer_busts() is True:
+                show_all(player=human_player, dealer=computer_player)
+                # Player won
+                player_wins()
+            else:
+                dealer_busts()  # To get the sum of dealer's card.
+                # Compare the sum of players; the player with sum nearest to 21 wins.
+                if (21-human_player.sum) < (21-computer_player.sum):
+                    # Player won
+                    show_all(player=human_player, dealer=computer_player)
+                    player_wins()
+                else:
+                    # Dealer won
+                    show_all(player=human_player, dealer=computer_player)
+                    dealer_wins()
+
+            # This is just for testing; you can remove this section.
+            # print("After Dealer is done hitting")
+            # computer_player.show_cards_on_hand()
+
+        # Ask if they wanted to play again?
+        ask_to_play = str(input("Would you like to play again? (Y/N)"))
+        if ask_to_play.upper() != 'Y':
+            print()
+            play_again = False
+
+    # Ask if they really wanted to quit game?
+    ask_to_quit = str(input("Are you sure to quit game? (Y/N)"))
+    if ask_to_quit.upper() == 'Y':
+        print("-----------------------")
+        print("Thank You for playing.")
+        play_begins = False
+    # End of game
