@@ -55,6 +55,7 @@ class Deck:
         random.shuffle(self.deck)
         print("Deck Shuffled!")
 
+    # This function is only for testing purpose
     def print_deck(self):
         """
         Prints a deck of card
@@ -212,10 +213,12 @@ def show_all(player, dealer):
 
 
 def player_busts():
-    if (human_player.sum_of_cards + human_player.aces*1) > 21:
-        return True
-    elif (human_player.sum_of_cards + human_player.aces*10) > 21:
-        return True
+    human_player.adjust_for_ace()  # Adjusting the number of Aces and sum the cards except Aces.
+    if (human_player.sum_of_cards + human_player.aces*11) > 21:
+        if (human_player.sum_of_cards + human_player.aces*1) > 21:
+            return True
+        else:
+            return False
     else:
         return False
 
@@ -225,7 +228,25 @@ def player_wins():
 
 
 def dealer_busts():
-    pass
+    computer_player.adjust_for_ace()
+    if (computer_player.sum_of_cards + computer_player.aces*11) > 21:
+        if(computer_player.sum_of_cards + computer_player.aces*1) > 21:
+            return True
+        else:
+            return False
+    else:
+        return False
+
+
+def dealer_keeps_hitting():
+    computer_player.adjust_for_ace()
+    if (computer_player.sum_of_cards + computer_player.aces*11) > 17:
+        if(computer_player.sum_of_cards + computer_player.aces*1) <= 17:
+            return True
+        else:
+            return False
+    else:
+        return True
 
 
 def dealer_wins():
@@ -243,7 +264,7 @@ while True:
     print("| Welcome To BlackJack |")
     print("========================")
     new_deck = Deck()  # Creating a new deck of cards.
-    new_deck.shuffle()  # Deck shuffled.
+    # new_deck.shuffle()  # Deck shuffled.
 
     # Ask for bet
     new_chip = Chips()
@@ -331,20 +352,33 @@ while True:
 
     # Ask player if he wishes to hit or stand.
     # You must keep this section.
-    playing = True
-    while playing:
-        playing = hit_or_stand(card_deck=new_deck, hand=human_player)
-        # Next step depends on whether player busts or not.
-        # Checking whether player busts or not
-        if playing is True:
-            human_player.adjust_for_ace()  # Adjusting the number of Aces and sum the cards except Aces.
+    human_playing = True
+    while human_playing:
+        human_playing = hit_or_stand(card_deck=new_deck, hand=human_player)
+        if human_playing is True:
+            # Before going for next hit let the player check his card once more.
+            show_some(player=human_player, dealer=computer_player)
             if player_busts() is True:  # To check if player busted.
-                playing = False
-            else:
-                playing = True
+                human_playing = False
+                # Might have to come back here...
 
     # To check if hit is working or not; you can remove it
     human_player.show_cards_on_hand()
 
+    # To check if hitting works for dealer or not.
+    print("Before Dealer's Turn")
+    computer_player.show_cards_on_hand()
+
+    # Once Human player stands; dealer's turn begins.
+    computer_playing = True
+    while computer_playing:
+        if dealer_keeps_hitting() is True:
+            hit(card_deck=new_deck, hand=computer_player)
+        else:
+            computer_playing = False
+
+    # This is just for testing; you can remove this section.
+    print("After Dealer is done hitting")
+    computer_player.show_cards_on_hand()
 
     break
