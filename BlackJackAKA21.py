@@ -69,18 +69,18 @@ class Deck:
 
 class Hand:
     def __init__(self):
-        self.cards = []  # This list holds cards on the hand of a player.
-        self.value = 0   # To keep track of the sum of all cards.
+        self.hold_cards = []  # This list holds cards on the hand of a player.
+        self.sum_of_cards = 0   # To keep track of the sum of all cards.
         self.aces = 0    # To keep track of aces so that its value can adjusted whenever necessary.
 
-    def add_card(self, card):
+    def add_card(self, new_card_to_add):
         """
         Adds new card to the hand of a player.
-        :param card: list that holds a deck of cards
+        :param new_card_to_add: list that holds a deck of cards
         :return:
         """
-        new_card_from_deck = card.pop()
-        self.cards.append(new_card_from_deck)
+        new_card_from_deck = new_card_to_add.pop(0)
+        self.hold_cards.append(new_card_from_deck)
 
     def adjust_for_ace(self):
         pass
@@ -106,4 +106,18 @@ while True:
     print("========================")
     new_deck = Deck()  # Creating a new deck of cards.
     new_deck.shuffle()  # Deck shuffled.
+
+    human_player = Hand()  # Human player created; Hand object.
+
+    # This section is for dealing card to human player
+    card_dealt_to_human_player = new_deck.deal()
+    human_player.add_card(card_dealt_to_human_player)
+    human_player.add_card(card_dealt_to_human_player)
+
+    # This section is for dealing card to computer player
+    computer_player = Hand()  # Computer player created; Hand object.
+    card_dealt_to_computer = new_deck.deal()
+    computer_player.add_card(card_dealt_to_computer)
+    computer_player.add_card(card_dealt_to_computer)
+
     break
