@@ -33,6 +33,9 @@ class Card:
         print('|             |')
         print('---------------')
 
+    def __del__(self):
+        pass
+
 
 class Deck:
     def __init__(self):
@@ -94,7 +97,7 @@ class Chips:
         self.bet = 0
 
     def win_bet(self):
-        self.total += 2*self.bet
+        self.total += self.bet
 
     def lose_bet(self):
         self.total = self.total - self.bet
@@ -332,18 +335,25 @@ while play_begins:
             else:
                 dealer_busts()  # To get the sum of dealer's card.
                 # Compare the sum of cards; the player with sum nearest to 21 wins.
-                if (21-human_player.sum) < (21-computer_player.sum):
+                if human_player.sum > computer_player.sum:
                     show_all(player=human_player, dealer=computer_player)
                     player_wins()
-                else:
+                elif computer_player.sum > human_player.sum:
                     show_all(player=human_player, dealer=computer_player)
                     dealer_wins()
+                else:
+                    print("Game Tied!")
 
         # Ask if they wanted to play again?
         ask_to_play = str(input("Would you like to play again? (Y/N)"))
         if ask_to_play.upper() != 'Y':
             print()
             play_again = False
+        else:
+            # Release memory
+            del new_deck
+            del human_player
+            del computer_player
 
     # Ask if they really wanted to quit game?
     ask_to_quit = str(input("Are you sure to quit game? (Y/N)"))
@@ -351,4 +361,7 @@ while play_begins:
         print("-----------------------")
         print("Thank You for playing.")
         play_begins = False
+    else:
+        # Release memory
+        del new_chip
     # End of game
