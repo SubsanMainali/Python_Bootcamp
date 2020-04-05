@@ -299,7 +299,7 @@ while play_begins:
         # To Show Dealer's one card and player's both cards.
         show_some(player=human_player, dealer=computer_player)
 
-        # Ask player if he wishes to hit or stand.
+        # Ask player if he wishes to hit or stand?
         human_playing = True
         dealer_turn = True
         while human_playing:
